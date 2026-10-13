@@ -2,6 +2,7 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import { Session, loadSession, logIn, logOut, signUp } from "./auth";
+import TaskList from "./task-list";
 
 type Mode = "closed" | "login" | "signup";
 
@@ -57,14 +58,18 @@ export default function AuthPanel() {
 
   if (session) {
     return (
-      <div className="auth-bar">
-        <span>
-          Signed in as <strong>{session.email}</strong>
-        </span>
-        <button type="button" onClick={handleLogOut}>
-          Log out
-        </button>
-      </div>
+      <>
+        <div className="auth-bar">
+          <span>
+            Signed in as <strong>{session.email}</strong>
+          </span>
+          <button type="button" onClick={handleLogOut}>
+            Log out
+          </button>
+        </div>
+        {/* key makes the list reload from scratch when a different account signs in */}
+        <TaskList key={session.email} />
+      </>
     );
   }
 

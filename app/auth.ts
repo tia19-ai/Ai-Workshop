@@ -1,8 +1,8 @@
 // Talks to Supabase Auth over its HTTP API with fetch, so no extra package is needed.
 // The session is kept in localStorage, which survives closing the browser.
 
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+export const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
+export const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 const STORAGE_KEY = "ai-workshop-session";
 
 export type Session = {
