@@ -1,9 +1,13 @@
 # Project state
-Last updated: 2026-10-08
+Last updated: 2026-10-13
 
 ## Works
 - Live Next.js site (App Router, TypeScript, plain CSS) deployed on Vercel at ai-workshop-tawny.vercel.app.
 - A Supabase project exists and is linked to the repo.
+- On the live site, a person can create an account with an email and a password and is signed in straight away.
+- A signed-in person sees "Signed in as" followed by their email, and can log out.
+- A person can log back in with the same email and password. A wrong password shows an error message and they stay logged out.
+- A signed-in person stays signed in after closing and reopening the browser (in a normal window, not a private one).
 
 ## Broken or flaky
 - Nothing known. The site does not use Supabase yet, so nothing involving accounts or saved data has been tested.
