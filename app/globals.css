@@ -256,6 +256,51 @@ button:disabled {
   color: var(--accent);
 }
 
+.balance {
+  margin-bottom: 2rem;
+}
+
+.balance-grid {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0 0.75rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.balance-grid li {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
+  margin: 0;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.balance-grid li.avoiding {
+  border-color: #a11d1d;
+}
+
+.balance-skill {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.balance-count {
+  font-size: 1.75rem;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.avoiding-tag {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #a11d1d;
+}
+
 @media (min-width: 640px) {
   body {
     font-size: 1.0625rem;
@@ -275,5 +320,9 @@ button:disabled {
 
   .tagline {
     font-size: 1.25rem;
+  }
+
+  .balance-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
