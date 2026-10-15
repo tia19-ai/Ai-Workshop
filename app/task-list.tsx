@@ -11,6 +11,7 @@ import {
   Task,
   addTask,
   createNextCopy,
+  deleteTask,
   listTasks,
   parseDate,
   setTaskDone,
@@ -45,6 +46,7 @@ export default function TaskList() {
   const [busy, setBusy] = useState(false);
   const [loadFailed, setLoadFailed] = useState(false);
   const [openTaskId, setOpenTaskId] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   useEffect(() => {
     listTasks()
@@ -95,6 +97,21 @@ export default function TaskList() {
       if (copy) setTasks((current) => byDueDate([...current, copy]));
     } catch {
       setError("Ticked off, but the next one could not be made. Untick it and tick it again to retry.");
+    }
+  }
+
+  async function handleDelete(task: Task) {
+    if (!window.confirm(`Delete "${task.title}"? This can't be undone.`)) return;
+    setError("");
+    setDeletingId(task.id);
+    try {
+      await deleteTask(task.id);
+      setTasks((current) => current.filter((t) => t.id !== task.id));
+      if (openTaskId === task.id) setOpenTaskId(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong.");
+    } finally {
+      setDeletingId(null);
     }
   }
 
@@ -177,6 +194,15 @@ export default function TaskList() {
                     onClick={() => setOpenTaskId(openTaskId === task.id ? null : task.id)}
                   >
                     {openTaskId === task.id ? "Close" : "Notes"}
+                  </button>
+                  <button
+                    type="button"
+                    className="secondary small danger"
+                    aria-label={`Delete ${task.title}`}
+                    disabled={deletingId === task.id}
+                    onClick={() => handleDelete(task)}
+                  >
+                    {deletingId === task.id ? "Deleting…" : "Delete"}
                   </button>
                 </div>
                 {openTaskId === task.id && <TaskNotes taskId={task.id} />}

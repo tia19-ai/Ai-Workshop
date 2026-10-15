@@ -404,6 +404,18 @@ button.small {
   padding: 0.15rem 0.7rem;
 }
 
+/* Delete button: same shape as the other small buttons, in the warning color. */
+button.secondary.danger {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+button.secondary.danger:hover,
+button.secondary.danger:focus-visible {
+  background: var(--danger);
+  color: var(--on-danger);
+}
+
 .task-notes {
   flex-basis: 100%;
   margin: 0.25rem 0 0.25rem 1.7rem;

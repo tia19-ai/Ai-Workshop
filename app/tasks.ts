@@ -99,6 +99,17 @@ export async function setTaskDone(id: string, done: boolean): Promise<void> {
   });
 }
 
+// Deletes a task for good. Its notes go with it (the database removes them automatically).
+// If nothing was deleted, the database refused, so say so rather than pretend it worked.
+export async function deleteTask(id: string): Promise<void> {
+  const res = await dataRequest("tasks", `?id=eq.${encodeURIComponent(id)}&select=id`, {
+    method: "DELETE",
+    headers: { Prefer: "return=representation" },
+  });
+  const rows: { id: string }[] = await res.json();
+  if (rows.length === 0) throw new Error("Could not delete that task. Please try again.");
+}
+
 // Creates the next copy of a repeating task. The database allows only one copy per task
 // (repeats_from is unique), so ticking, unticking and ticking again never makes a second
 // copy: the duplicate is ignored and this returns null.
