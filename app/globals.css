@@ -1,10 +1,14 @@
 :root {
-  --accent: #0f5c5c;
-  --accent-hover: #1a7a7a;
-  --text: #1a1a1a;
-  --muted: #555555;
-  --bg: #fdfcfa;
-  --border: #e6e3de;
+  --accent: #c2185b;
+  --accent-hover: #a3134b;
+  --accent-soft: #fde4ee;
+  --text: #3b2530;
+  --muted: #7d5566;
+  --bg: #fff5f8;
+  --surface: #ffffff;
+  --border: #f5cfdd;
+  --danger: #8e1b3e;
+  --shadow: 0 6px 24px rgba(194, 24, 91, 0.08);
 }
 
 *,
@@ -19,10 +23,14 @@ html {
 
 body {
   margin: 0;
-  background: var(--bg);
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 15% 0%, #ffd9e8 0, transparent 45%),
+    radial-gradient(circle at 90% 20%, #ffe9f1 0, transparent 40%),
+    var(--bg);
   color: var(--text);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, sans-serif;
+  font-family: var(--font-body), -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, sans-serif;
   font-size: 1rem;
   line-height: 1.65;
   overflow-wrap: break-word;
@@ -37,13 +45,16 @@ body {
 h1,
 h2 {
   color: var(--accent);
+  font-family: var(--font-heading), Georgia, "Times New Roman", serif;
+  font-weight: 600;
   line-height: 1.2;
   margin: 0 0 0.5rem;
 }
 
 h1 {
-  font-size: 2.5rem;
-  letter-spacing: -0.02em;
+  font-size: 2.75rem;
+  font-style: italic;
+  letter-spacing: -0.01em;
 }
 
 h2 {
@@ -66,6 +77,17 @@ p {
 
 .hero {
   margin-bottom: 2.5rem;
+  text-align: center;
+}
+
+.hero h1::after {
+  content: "";
+  display: block;
+  width: 3rem;
+  height: 3px;
+  margin: 0.75rem auto 0;
+  border-radius: 999px;
+  background: var(--accent);
 }
 
 .tagline {
@@ -102,7 +124,9 @@ footer {
   padding: 0.75rem 1rem;
   margin-bottom: 2.5rem;
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: 16px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
   font-size: 0.95rem;
 }
 
@@ -115,7 +139,7 @@ button {
   font: inherit;
   padding: 0.4rem 1rem;
   border: 1px solid var(--accent);
-  border-radius: 6px;
+  border-radius: 999px;
   background: var(--accent);
   color: #ffffff;
   cursor: pointer;
@@ -166,7 +190,7 @@ button:disabled {
   font: inherit;
   padding: 0.4rem 0.6rem;
   border: 1px solid var(--border);
-  border-radius: 6px;
+  border-radius: 10px;
 }
 
 .auth-form button {
@@ -174,8 +198,17 @@ button:disabled {
 }
 
 .auth-error {
-  color: #a11d1d;
+  color: var(--danger);
   margin: 0;
+}
+
+.tasks,
+.balance {
+  padding: 1.25rem 1.25rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
 }
 
 .tasks {
@@ -206,8 +239,8 @@ button:disabled {
   font: inherit;
   padding: 0.4rem 0.6rem;
   border: 1px solid var(--border);
-  border-radius: 6px;
-  background: #ffffff;
+  border-radius: 10px;
+  background: var(--surface);
 }
 
 .muted {
@@ -256,9 +289,10 @@ button:disabled {
 .skill-tag {
   flex-shrink: 0;
   font-size: 0.8rem;
-  padding: 0.1rem 0.6rem;
-  border: 1px solid var(--accent);
+  padding: 0.1rem 0.7rem;
+  border: 1px solid var(--border);
   border-radius: 999px;
+  background: var(--accent-soft);
   color: var(--accent);
 }
 
@@ -327,8 +361,8 @@ button.small {
   font: inherit;
   padding: 0.4rem 0.6rem;
   border: 1px solid var(--border);
-  border-radius: 6px;
-  background: #ffffff;
+  border-radius: 10px;
+  background: var(--surface);
   resize: vertical;
 }
 
@@ -353,11 +387,13 @@ button.small {
   margin: 0;
   padding: 0.75rem 1rem;
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: 14px;
+  background: var(--accent-soft);
 }
 
 .balance-grid li.avoiding {
-  border-color: #a11d1d;
+  border: 2px solid var(--danger);
+  background: var(--surface);
 }
 
 .balance-skill {
@@ -366,15 +402,19 @@ button.small {
 }
 
 .balance-count {
+  font-family: var(--font-heading), Georgia, serif;
   font-size: 1.75rem;
   font-weight: 600;
   line-height: 1.1;
 }
 
 .avoiding-tag {
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: #a11d1d;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0 0.5rem;
+  border-radius: 999px;
+  background: var(--danger);
+  color: #ffffff;
 }
 
 @media (min-width: 640px) {
@@ -387,7 +427,7 @@ button.small {
   }
 
   h1 {
-    font-size: 3rem;
+    font-size: 3.5rem;
   }
 
   h2 {
