@@ -2,6 +2,7 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import SkillBalance from "./skill-balance";
+import TaskNotes from "./task-notes";
 import { SKILLS, Skill, Task, addTask, listTasks, setTaskDone } from "./tasks";
 
 export default function TaskList() {
@@ -12,6 +13,7 @@ export default function TaskList() {
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const [loadFailed, setLoadFailed] = useState(false);
+  const [openTaskId, setOpenTaskId] = useState<string | null>(null);
 
   useEffect(() => {
     listTasks()
@@ -107,7 +109,18 @@ export default function TaskList() {
                   <input type="checkbox" checked={task.done} onChange={() => handleToggle(task)} />
                   <span className="task-title">{task.title}</span>
                 </label>
-                <span className="skill-tag">{task.skill}</span>
+                <div className="task-actions">
+                  <span className="skill-tag">{task.skill}</span>
+                  <button
+                    type="button"
+                    className="secondary small"
+                    aria-expanded={openTaskId === task.id}
+                    onClick={() => setOpenTaskId(openTaskId === task.id ? null : task.id)}
+                  >
+                    {openTaskId === task.id ? "Close" : "Notes"}
+                  </button>
+                </div>
+                {openTaskId === task.id && <TaskNotes taskId={task.id} />}
               </li>
             ))}
           </ul>
