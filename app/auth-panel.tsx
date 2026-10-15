@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { FormEvent, useEffect, useState } from "react";
 import { Session, loadSession, logIn, logOut, signUp } from "./auth";
 import TaskList from "./task-list";
@@ -63,9 +64,14 @@ export default function AuthPanel() {
           <span>
             Signed in as <strong>{session.email}</strong>
           </span>
-          <button type="button" onClick={handleLogOut}>
-            Log out
-          </button>
+          <div className="auth-buttons">
+            <Link href="/completed" className="button-link">
+              Completed
+            </Link>
+            <button type="button" onClick={handleLogOut}>
+              Log out
+            </button>
+          </div>
         </div>
         {/* key makes the list reload from scratch when a different account signs in */}
         <TaskList key={session.email} />
