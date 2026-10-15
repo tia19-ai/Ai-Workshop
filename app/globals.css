@@ -247,6 +247,12 @@ button:disabled {
   color: var(--muted);
 }
 
+.task-meta {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
 .skill-tag {
   flex-shrink: 0;
   font-size: 0.8rem;

@@ -6,12 +6,19 @@ import { SUPABASE_KEY, SUPABASE_URL, loadSession } from "./auth";
 export const SKILLS = ["Listening", "Speaking", "Reading", "Writing"] as const;
 export type Skill = (typeof SKILLS)[number];
 
+export const REPEATS = ["none", "daily", "weekly"] as const;
+export type Repeat = (typeof REPEATS)[number];
+
 export type Task = {
   id: string;
   title: string;
   skill: Skill;
   done: boolean;
+  repeat: Repeat;
+  due_on: string; // a calendar date such as "2026-10-15"
 };
+
+const TASK_COLUMNS = "id,title,skill,done,repeat,due_on";
 
 // Sends one request to a Supabase table as the signed-in user. Also used by notes.ts.
 export async function dataRequest(
@@ -37,16 +44,48 @@ export async function dataRequest(
   return res;
 }
 
+// Dates are handled as plain "YYYY-MM-DD" strings in the learner's own time zone.
+function toDateString(date: Date): string {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
+export function parseDate(value: string): Date {
+  const [y, m, d] = value.split("-").map(Number);
+  return new Date(y, m - 1, d);
+}
+
+export function today(): string {
+  return toDateString(new Date());
+}
+
+// The next date in the pattern that is after today. A weekly task due today comes back
+// in 7 days; one that was left for three weeks comes back once, not three times.
+export function nextDueDate(dueOn: string, repeat: Repeat): string {
+  const step = repeat === "weekly" ? 7 : 1;
+  const next = parseDate(dueOn);
+  const now = today();
+  do {
+    next.setDate(next.getDate() + step);
+  } while (toDateString(next) <= now);
+  return toDateString(next);
+}
+
 export async function listTasks(): Promise<Task[]> {
-  const res = await dataRequest("tasks", "?select=id,title,skill,done&order=created_at.asc");
+  const res = await dataRequest(
+    "tasks",
+    `?select=${TASK_COLUMNS}&order=due_on.asc,created_at.asc`,
+  );
   return res.json();
 }
 
-export async function addTask(title: string, skill: Skill): Promise<Task> {
-  const res = await dataRequest("tasks", "?select=id,title,skill,done", {
+export async function addTask(title: string, skill: Skill, repeat: Repeat): Promise<Task> {
+  const res = await dataRequest("tasks", `?select=${TASK_COLUMNS}`, {
     method: "POST",
     headers: { Prefer: "return=representation" },
-    body: JSON.stringify({ title, skill }),
+    body: JSON.stringify({ title, skill, repeat, due_on: today() }),
   });
   const rows: Task[] = await res.json();
   return rows[0];
@@ -58,4 +97,23 @@ export async function setTaskDone(id: string, done: boolean): Promise<void> {
     headers: { Prefer: "return=minimal" },
     body: JSON.stringify({ done }),
   });
+}
+
+// Creates the next copy of a repeating task. The database allows only one copy per task
+// (repeats_from is unique), so ticking, unticking and ticking again never makes a second
+// copy: the duplicate is ignored and this returns null.
+export async function createNextCopy(task: Task): Promise<Task | null> {
+  const res = await dataRequest("tasks", `?on_conflict=repeats_from&select=${TASK_COLUMNS}`, {
+    method: "POST",
+    headers: { Prefer: "return=representation,resolution=ignore-duplicates" },
+    body: JSON.stringify({
+      title: task.title,
+      skill: task.skill,
+      repeat: task.repeat,
+      due_on: nextDueDate(task.due_on, task.repeat),
+      repeats_from: task.id,
+    }),
+  });
+  const rows: Task[] = await res.json();
+  return rows[0] ?? null;
 }
