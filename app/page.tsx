@@ -1,10 +1,12 @@
 import AuthPanel from "./auth-panel";
+import CustomizePanel from "./customize-panel";
 
 export default function Home() {
   const year = new Date().getFullYear();
 
   return (
     <div className="container">
+      <CustomizePanel />
       <AuthPanel />
 
       <header className="hero">

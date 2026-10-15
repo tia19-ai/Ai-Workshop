@@ -2,13 +2,101 @@
   --accent: #c2185b;
   --accent-hover: #a3134b;
   --accent-soft: #fde4ee;
+  --on-accent: #ffffff;
   --text: #3b2530;
   --muted: #7d5566;
   --bg: #fff5f8;
   --surface: #ffffff;
   --border: #f5cfdd;
   --danger: #8e1b3e;
+  --on-danger: #ffffff;
+  --glow-1: #ffd9e8;
+  --glow-2: #ffe9f1;
   --shadow: 0 6px 24px rgba(194, 24, 91, 0.08);
+}
+
+/* Color moods, picked in the Customize sidebar. "happy" is the pink default above. */
+:root[data-mood="calm"] {
+  --accent: #1f5f8b;
+  --accent-hover: #174a6d;
+  --accent-soft: #e2eff8;
+  --text: #1e2a33;
+  --muted: #536877;
+  --bg: #f4f9fc;
+  --border: #cfe2ef;
+  --danger: #9b2c2c;
+  --glow-1: #d6eaf8;
+  --glow-2: #e8f4fb;
+  --shadow: 0 6px 24px rgba(31, 95, 139, 0.08);
+}
+
+:root[data-mood="fresh"] {
+  --accent: #2e7d4f;
+  --accent-hover: #23613d;
+  --accent-soft: #e3f3e8;
+  --text: #1f2e25;
+  --muted: #557060;
+  --bg: #f5fbf6;
+  --border: #cfe8d6;
+  --danger: #9b2c2c;
+  --glow-1: #d7f0de;
+  --glow-2: #eaf7ed;
+  --shadow: 0 6px 24px rgba(46, 125, 79, 0.08);
+}
+
+:root[data-mood="sunny"] {
+  --accent: #b4530a;
+  --accent-hover: #8f4208;
+  --accent-soft: #fdf0dc;
+  --text: #33261a;
+  --muted: #76604a;
+  --bg: #fffaf2;
+  --border: #f4dfbf;
+  --danger: #9b2c2c;
+  --glow-1: #ffe9c4;
+  --glow-2: #fff3dc;
+  --shadow: 0 6px 24px rgba(180, 83, 10, 0.08);
+}
+
+:root[data-mood="dreamy"] {
+  --accent: #6d4aa8;
+  --accent-hover: #563a86;
+  --accent-soft: #efe8fa;
+  --text: #2b2338;
+  --muted: #685c7d;
+  --bg: #faf7fe;
+  --border: #e0d5f2;
+  --danger: #9b2c48;
+  --glow-1: #e6dbf8;
+  --glow-2: #f2ecfc;
+  --shadow: 0 6px 24px rgba(109, 74, 168, 0.08);
+}
+
+:root[data-mood="sleepy"] {
+  color-scheme: dark;
+  --accent: #f48fb1;
+  --accent-hover: #f8b3cb;
+  --accent-soft: #3a2a33;
+  --on-accent: #1d1a22;
+  --text: #f1e9ef;
+  --muted: #b8a6b1;
+  --bg: #1d1a22;
+  --surface: #2a2530;
+  --border: #433a47;
+  --danger: #ff8fa3;
+  --on-danger: #1d1a22;
+  --glow-1: #2c2231;
+  --glow-2: #241f2a;
+  --shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+}
+
+/* Text size, picked in the Customize sidebar. Every size on the page is in rem, so it all scales. */
+:root[data-size="small"] {
+  font-size: 93.75%;
+}
+
+:root[data-size="large"] {
+  font-size: 112.5%;
 }
 
 *,
@@ -25,8 +113,8 @@ body {
   margin: 0;
   min-height: 100vh;
   background:
-    radial-gradient(circle at 15% 0%, #ffd9e8 0, transparent 45%),
-    radial-gradient(circle at 90% 20%, #ffe9f1 0, transparent 40%),
+    radial-gradient(circle at 15% 0%, var(--glow-1) 0, transparent 45%),
+    radial-gradient(circle at 90% 20%, var(--glow-2) 0, transparent 40%),
     var(--bg);
   color: var(--text);
   font-family: var(--font-body), -apple-system, BlinkMacSystemFont, "Segoe UI",
@@ -39,7 +127,8 @@ body {
 .container {
   max-width: 680px;
   margin: 0 auto;
-  padding: 3rem 1.25rem 2rem;
+  /* Extra top room on phones so the Customize tab does not cover the sign-in bar. */
+  padding: 4.5rem 1.25rem 2rem;
 }
 
 h1,
@@ -141,7 +230,7 @@ button {
   border: 1px solid var(--accent);
   border-radius: 999px;
   background: var(--accent);
-  color: #ffffff;
+  color: var(--on-accent);
   cursor: pointer;
 }
 
@@ -159,7 +248,7 @@ button.secondary {
 button.secondary:hover,
 button.secondary:focus-visible {
   background: var(--accent);
-  color: #ffffff;
+  color: var(--on-accent);
 }
 
 button:disabled {
@@ -191,6 +280,8 @@ button:disabled {
   padding: 0.4rem 0.6rem;
   border: 1px solid var(--border);
   border-radius: 10px;
+  background: var(--surface);
+  color: var(--text);
 }
 
 .auth-form button {
@@ -241,6 +332,7 @@ button:disabled {
   border: 1px solid var(--border);
   border-radius: 10px;
   background: var(--surface);
+  color: var(--text);
 }
 
 .muted {
@@ -414,7 +506,140 @@ button.small {
   padding: 0 0.5rem;
   border-radius: 999px;
   background: var(--danger);
-  color: #ffffff;
+  color: var(--on-danger);
+}
+
+/* Customize sidebar: hidden off the right edge until the Customize tab is clicked. */
+.customize-toggle {
+  position: fixed;
+  top: 1rem;
+  right: 0;
+  z-index: 20;
+  border-radius: 999px 0 0 999px;
+  padding: 0.45rem 0.9rem 0.45rem 1rem;
+  box-shadow: var(--shadow);
+}
+
+.customize-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  background: rgba(0, 0, 0, 0.25);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s;
+}
+
+.customize-backdrop.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.customize-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 40;
+  width: min(320px, 85vw);
+  overflow-y: auto;
+  padding: 1.25rem;
+  background: var(--surface);
+  border-left: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  transform: translateX(100%);
+  visibility: hidden;
+  transition: transform 0.25s ease, visibility 0s linear 0.25s;
+}
+
+.customize-drawer.open {
+  transform: none;
+  visibility: visible;
+  transition: transform 0.25s ease;
+}
+
+.customize-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.customize-header h2 {
+  margin: 0;
+}
+
+.customize-group {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  margin-bottom: 0.75rem;
+  background: var(--bg);
+}
+
+.customize-group summary {
+  padding: 0.7rem 1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.customize-group fieldset {
+  border: none;
+  margin: 0;
+  padding: 0 0.5rem 0.5rem;
+}
+
+.choice {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.45rem 0.5rem;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.choice:hover {
+  background: var(--accent-soft);
+}
+
+.choice input {
+  accent-color: var(--accent);
+}
+
+.swatch {
+  flex-shrink: 0;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  border: 2px solid var(--surface);
+  box-shadow: 0 0 0 1px var(--border);
+}
+
+.choice-label {
+  display: block;
+  line-height: 1.3;
+}
+
+.choice-hint {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--muted);
+  line-height: 1.3;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .customize-drawer,
+  .customize-backdrop {
+    transition: none;
+  }
 }
 
 @media (min-width: 640px) {
