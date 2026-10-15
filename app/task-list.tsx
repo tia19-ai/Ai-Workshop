@@ -3,13 +3,44 @@
 import { FormEvent, useEffect, useState } from "react";
 import SkillBalance from "./skill-balance";
 import TaskNotes from "./task-notes";
-import { SKILLS, Skill, Task, addTask, listTasks, setTaskDone } from "./tasks";
+import {
+  REPEATS,
+  Repeat,
+  SKILLS,
+  Skill,
+  Task,
+  addTask,
+  createNextCopy,
+  listTasks,
+  parseDate,
+  setTaskDone,
+} from "./tasks";
+
+const REPEAT_LABELS: Record<Repeat, string> = {
+  none: "Does not repeat",
+  daily: "Daily",
+  weekly: "Weekly",
+};
+
+// Earliest due date first; tasks due the same day keep the order they were added in.
+function byDueDate(tasks: Task[]): Task[] {
+  return [...tasks].sort((a, b) => a.due_on.localeCompare(b.due_on));
+}
+
+function formatDate(value: string): string {
+  return parseDate(value).toLocaleDateString(undefined, {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+  });
+}
 
 export default function TaskList() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [title, setTitle] = useState("");
   const [skill, setSkill] = useState<Skill | "">("");
+  const [repeat, setRepeat] = useState<Repeat>("none");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const [loadFailed, setLoadFailed] = useState(false);
@@ -17,7 +48,7 @@ export default function TaskList() {
 
   useEffect(() => {
     listTasks()
-      .then(setTasks)
+      .then((rows) => setTasks(byDueDate(rows)))
       .catch((err) => {
         setError(err.message);
         setLoadFailed(true);
@@ -31,10 +62,11 @@ export default function TaskList() {
     setBusy(true);
     setError("");
     try {
-      const task = await addTask(title.trim(), skill);
-      setTasks((current) => [...current, task]);
+      const task = await addTask(title.trim(), skill, repeat);
+      setTasks((current) => byDueDate([...current, task]));
       setTitle("");
       setSkill("");
+      setRepeat("none");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong.");
     } finally {
@@ -52,6 +84,17 @@ export default function TaskList() {
     } catch (err) {
       setTasks((current) => current.map((t) => (t.id === task.id ? { ...t, done: !done } : t)));
       setError(err instanceof Error ? err.message : "Something went wrong.");
+      return;
+    }
+
+    // Ticking off a repeating task finishes this one and makes the next one.
+    // Unticking leaves any copy already made alone.
+    if (!done || task.repeat === "none") return;
+    try {
+      const copy = await createNextCopy(task);
+      if (copy) setTasks((current) => byDueDate([...current, copy]));
+    } catch {
+      setError("Ticked off, but the next one could not be made. Untick it and tick it again to retry.");
     }
   }
 
@@ -86,6 +129,16 @@ export default function TaskList() {
               ))}
             </select>
           </label>
+          <label>
+            Repeats
+            <select value={repeat} onChange={(e) => setRepeat(e.target.value as Repeat)}>
+              {REPEATS.map((r) => (
+                <option key={r} value={r}>
+                  {REPEAT_LABELS[r]}
+                </option>
+              ))}
+            </select>
+          </label>
           <button type="submit" disabled={busy}>
             {busy ? "Adding…" : "Add"}
           </button>
@@ -107,7 +160,13 @@ export default function TaskList() {
               <li key={task.id} className={task.done ? "done" : undefined}>
                 <label>
                   <input type="checkbox" checked={task.done} onChange={() => handleToggle(task)} />
-                  <span className="task-title">{task.title}</span>
+                  <span>
+                    <span className="task-title">{task.title}</span>
+                    <span className="task-meta">
+                      Due {formatDate(task.due_on)}
+                      {task.repeat !== "none" && ` · Repeats ${task.repeat}`}
+                    </span>
+                  </span>
                 </label>
                 <div className="task-actions">
                   <span className="skill-tag">{task.skill}</span>
