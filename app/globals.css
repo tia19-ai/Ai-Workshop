@@ -509,6 +509,77 @@ button.small {
   color: var(--on-danger);
 }
 
+/* Link styled like a secondary button, used for "Completed" in the sign-in bar. */
+.button-link {
+  display: inline-block;
+  padding: 0.4rem 1rem;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  text-decoration: none;
+}
+
+.button-link:hover,
+.button-link:focus-visible {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+/* Completed page: one card per week, newest first. */
+.back-link {
+  margin-bottom: 1.5rem;
+}
+
+.week {
+  padding: 1.25rem 1.25rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.week-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.week-header h2 {
+  margin: 0;
+}
+
+.week-count {
+  min-width: 2.5rem;
+  padding: 0.1rem 0.75rem;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-family: var(--font-heading), Georgia, serif;
+  font-size: 1.35rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.week-tasks {
+  list-style: none;
+  padding: 0;
+}
+
+.week-tasks li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.6rem 0;
+  margin: 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.week-tasks li:last-child {
+  border-bottom: none;
+}
+
 /* Customize sidebar: hidden off the right edge until the Customize tab is clicked. */
 .customize-toggle {
   position: fixed;
